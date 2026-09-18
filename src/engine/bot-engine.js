@@ -103,7 +103,8 @@ async function encryptResource({inputZipPath, targetIp, resourceName, encryption
     await createZipFromDirectory(extracted, outputPath);
     const stat = fs.statSync(outputPath);
     const script = db.saveScript({title: resourceName, originalFilename: outputName, savedFilename: outputName, fileSize: stat.size, targetIp, resourceName, encryptionMode, uploaderName: uploader.name || 'Web User', uploaderId: uploader.id || null});
-    await notifyDiscord({channelId: panelChannelId, botToken, script, uploader});
+    // لا ترسل عمليات تشفير الموقع إلى روم Discord العام.
+    // يبقى إشعار البوت الداخلي مستقلًا عن لوحة الموقع.
     return {script};
   } finally {
     fs.rmSync(work, {recursive: true, force: true});
