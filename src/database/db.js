@@ -19,8 +19,8 @@ function ensureDirectories() {
   }
 }
 
-// توليد كود مميز وسهل القراءة (مثل RAVX-8K3M9)
-function generateCode(prefix = 'RAVX', length = 5) {
+// توليد كود مميز وسهل القراءة (مثل RAVX-8K3M9ABCD)
+function generateCode(prefix = 'RAVX', length = 10) {
   const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
   let code = '';
   for (let i = 0; i < length; i++) {
@@ -159,9 +159,9 @@ function initDemoData() {
       resourceName: 'qb-vehicleshop',
       encryptionMode: 'target',
       uploaderName: 'RAVX Admin',
-      customCode: 'RAVX-DEMO1'
+      customCode: 'RAVX-DEMO000001'
     });
-    console.log('✅ تم إنشاء كود تجريبي لاختبار الموقع: RAVX-DEMO1');
+    console.log('✅ تم إنشاء كود تجريبي لاختبار الموقع: RAVX-DEMO000001');
   }
 }
 
