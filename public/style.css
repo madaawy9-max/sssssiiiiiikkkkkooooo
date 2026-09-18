@@ -22,3 +22,19 @@ body:after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;back
 
 .page-hidden{display:none!important}.nav nav a{position:relative;padding:8px 2px}.nav nav a.active{color:#fff}.nav nav a.active:after{content:'';position:absolute;right:0;left:0;bottom:0;height:2px;border-radius:4px;background:linear-gradient(90deg,#60b5ff,#2563eb);box-shadow:0 0 12px #398cff}.page{min-height:420px}.download-section.page{min-height:520px}.section.page{padding-top:64px}.page:not(.page-hidden){animation:pageIn .45s ease both}@keyframes pageIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 @media(max-width:650px){.nav nav{display:flex;overflow-x:auto;gap:15px;max-width:48vw}.nav nav a{white-space:nowrap;font-size:11px}}
+
+/* RAVX redesign v2 */
+.top{position:sticky;top:0;z-index:99;backdrop-filter:blur(18px)}
+.nav nav{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.nav nav a{padding:10px 18px;border-radius:999px;background:rgba(255,255,255,.04);transition:.3s}
+.nav nav a:hover,.nav nav a.active{transform:translateY(-3px);background:linear-gradient(135deg,#5865f2,#8b5cf6);color:#fff}
+.page-hidden{display:none!important}
+.page{animation:pageIn .55s ease both}
+@keyframes pageIn{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:none}}
+.hero{min-height:75vh}
+.plan,.dash-card,.download-panel,.steps>div{transition:.35s;overflow:hidden}
+.plan:hover,.dash-card:hover,.steps>div:hover{transform:translateY(-8px);box-shadow:0 25px 60px rgba(0,0,0,.35)}
+.btn{transition:.3s;position:relative;overflow:hidden}
+.btn:hover{transform:scale(1.04)}
+.section-head h2{letter-spacing:-1px}
+@media(max-width:800px){.nav{gap:12px}.nav nav{order:3;width:100%}.hero{padding-top:30px}}
