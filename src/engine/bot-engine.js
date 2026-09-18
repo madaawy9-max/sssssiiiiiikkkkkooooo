@@ -13,6 +13,28 @@ try {
 }
 const execFileAsync = promisify(execFile);
 
+function luaString(value) {
+  return String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\r/g, '\\r').replace(/\n/g, '\\n');
+}
+
+function buildIpGuard(targetIp, resourceName) {
+  return `-- Ravx Store license guard\nCreateThread(function()\n  Wait(1000)\n  local expected = "${luaString(resourceName)}"\n  if GetCurrentResourceName() ~= expected then StopResource(GetCurrentResourceName()) return end\n  local checked, allowed = false, false\n  PerformHttpRequest("https://api.ipify.org", function(code, body)\n    if code == 200 and body then allowed = body:gsub("%s+", "") == "${luaString(targetIp)}" end\n    checked = true\n  end, "GET", "")\n  local waited = 0\n  while not checked and waited < 80 do Wait(100) waited = waited + 1 end\n  if not allowed then StopResource(GetCurrentResourceName()) end\nend)\n`;
+}
+
+function installIpGuard(root, targetIp, resourceName) {
+  const guard = 'ravx_license.lua';
+  fs.writeFileSync(path.join(root, guard), obfuscateLua(buildIpGuard(targetIp, resourceName), guard), 'utf8');
+  for (const name of ['fxmanifest.lua', '__resource.lua']) {
+    const manifest = path.join(root, name);
+    if (!fs.existsSync(manifest)) continue;
+    let text = fs.readFileSync(manifest, 'utf8');
+    if (!/server_script\s+['"]ravx_license\.lua['"]/.test(text)) text += `\nserver_script '${guard}'\n`;
+    fs.writeFileSync(manifest, text, 'utf8');
+    return;
+  }
+  fs.writeFileSync(path.join(root, 'fxmanifest.lua'), `fx_version 'cerulean'\ngame 'gta5'\nserver_script '${guard}'\n`, 'utf8');
+}
+
 function obfuscateLua(source, label) {
   const k1 = crypto.randomInt(30, 230), k2 = crypto.randomInt(30, 230), mul = [3,5,7,9,11,13][crypto.randomInt(0,6)];
   const bytes = Buffer.from(source, 'utf8');
@@ -75,6 +97,7 @@ async function encryptResource({inputZipPath, targetIp, resourceName, encryption
     const children = fs.readdirSync(extracted, {withFileTypes: true});
     if (children.length === 1 && children[0].isDirectory()) processRoot = path.join(extracted, children[0].name);
     await walkAndProtect(processRoot, targetIp, resourceName, encryptionMode);
+    if (targetIp && encryptionMode !== 'none') installIpGuard(processRoot, targetIp, resourceName);
     fs.mkdirSync(path.dirname(outputPath), {recursive: true});
     if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
     await createZipFromDirectory(extracted, outputPath);
